@@ -1,0 +1,35 @@
+About the Data:
+The Data is released by National Data Sharing and  Accessibility policy (NDSAP).
+This data refer to the number of students enrolled for primary and secondary education.
+This also has the gender based admission of students in primary and secondary school
+Released Under: National Data Sharing and Accessibility Policy (NDSAP)
+
+This is the link to download the data 
+https://data.gov.in/catalog/number-students
+There are three csv data
+1. Number_of_Students_Per_Teacher-Primary_and_Upper_primary_School.csv
+school.type # School type primary or Secondary
+State/Union Territory # States and UT of India
+year # 2001-2010
+
+1.Function BestStateTeacherStudent.R(file name) :
+This function (BestSchoolState) gives the state with best teachers to student ratio.
+The function takes school type (primary school  or upper primary school ) and year (2001-2010)
+
+Example
+BestSchoolState("Primary school",2010)
+     School.Type           India..State..UTs NosofTeacher
+2 Primary School Andaman and Nicobar Islands           13
+
+2. StateRankTeacherStudentratio.R(file name):
+This function (StateRanking) gives the rank of the state with respect best teachers to student ratio.
+The function takes three parameter 
+:school type (primary school  or upper primary school )
+:year (2001-2010)
+:num (Rank)
+
+Example
+StateRanking("primary school","2001","worst")
+School.Type India..State..UTs  NosofTeacher  state_rank
+6 Primary School                Bihar           73          1
+
