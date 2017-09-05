@@ -1,0 +1,136 @@
+---
+title: "CSCI E-63C: Week 1 Assignment Submission"
+output:
+  html_document:
+    keep_md: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Problem 1 (30 points).
+
+In this problem, we will characterize that distribution of the sample means with its standard deviation AND examine how the spread of the distribution decreases with increasing sample size (in line with quite intuitive notion that if we draw a larger sample, its mean is expected to be closer, at least on average, to the true mean of the underlying population the sample is drawn from). 
+
+```{r sem,eval=TRUE,fig.width=5, fig.height=3}
+# different sample sizes we are going to try:
+sample.sizes=c(3,10,50, 100, 500, 1000)
+
+# we will use the vector below to keep the SD of the distribution of the means at each given sample size
+# (note that it's ok to initialize with an empty vector of length 0 - if we index it out of bounds
+# later, it will autoexpand on assignment, see examples in the slides) 
+mean.sds = numeric(0) 
+
+for ( N in 1:length(sample.sizes) ) {
+    sample.mean <- c()
+    for (i in 1:1000)
+      sample.mean[i] = mean(rnorm(sample.sizes[N], mean = 0, sd =1))
+      mean.sds[N] = sd(sample.mean)
+}
+plot(sample.sizes,mean.sds, pch =19,
+     main="SEM vs sample size",
+     xlab="Sample size", 
+     ylab ="SEM")
+lines(sample.sizes, 1/sqrt(sample.sizes),
+      col ='blue')
+
+```
+
+When sample of size $N$ is drawn from a distribution with standard deviation $\sigma$, the standard error of the mean of such sample is $SEM=\frac{\sigma}{\sqrt{N}}$. Drawing samples from a distribution with a different standard deviation and keeping the mean as 10
+
+```{r sigmaSem,eval=TRUE,fig.width=3, fig.height=3}
+
+diff.std_devia = c(3,6)
+for (j in diff.std_devia){
+sample.sizes=c(3,10,50,100,500,100)
+mean.sds = numeric(0)
+
+for ( N in 1:length(sample.sizes) ) {
+    sample.mean <- c()
+    for (i in 1:1000 )
+      sample.mean[i] = mean(rnorm(sample.sizes[N], mean = 10, sd =j))
+      mean.sds[N] = sd(sample.mean)
+}
+
+plot(sample.sizes,mean.sds, pch =19,
+     main=paste("SEM vs sample size, σ =" ,j ), 
+     xlab="Sample size", ylab ="SEM", ylim = c(0,4))
+lines(sample.sizes, j/sqrt(sample.sizes), col ='blue')}
+```
+
+The SEM Values falls nicely onto the theorectical curve. 
+
+# Problem 2 (30 points).
+
+**Part1**
+There is a beautiful fact in statistics called the Central Limit Theorem (CLT). It states that the distribution of a sum of $N$ independent, identically distributed (i.i.d.) random variables $X_i$ has normal distribution in the limit of large $N$, regardless of the distribution of the variables $X_i$ (under some very mild conditions, strictly speaking). Simulate and observe it in action.
+
+
+**Solution** 
+
+To simulate the CLT, I have created 100 independent,identically exponentially distributed variables using rexp function in r. N random iids are draw from the above exponential distributed sample, with replacement and summed up and this is repeated 1000 times.
+
+```{r clt,eval=TRUE}
+set.seed(1234)
+par(mfrow = c(2,3), ps =16)
+
+x= rexp(100)  # 100 random variables generated from exponential distribution
+N = c(1,3,10,30,500,1000) # the number of iid varaiables X we going to Sum
+
+for (j in N){
+    repeats = 1000 # experiment repeated 1000 times
+    s.values = numeric()
+    for (n.exp in 1:repeats){
+        s.values[n.exp] = sum(sample(x,j,replace=TRUE))}
+        hist(s.values,breaks=8, 
+              col= 'grey',
+               main=paste("Exp. Dist.(N = ",j,")"),
+               xlab='Sample Sum')
+            }
+
+```
+
+When the code above uses $N=1$ obviously it represent the exponential distribution itself. So the histogram will shows the exponential distributions. As we increase the sample size , we see the histogram becomes normal distribution even though the underlying is an exponential distribution. Hence we could simulate the Central limit Theorem.
+
+**Part2**
+Suppose you have an arbitrary distribution and take a sample of $N$ measurements from it.You calculate the mean of your sample. As we discussed, the sample mean is a random variable, of course. How is the sample mean distributed when $N$ becomes large?  What does its average approach (zero? infinity? constant? which one if so?)  What about standard deviation?  Can anything be said about shape of such distribution of sample means in the limit of large $N$?  HINT: look at the definition of the sample mean!
+
+**Solution**
+
+```{r tln,eval=TRUE}
+set.seed(1236)
+par(mfrow = c(2,1),ps =8)
+arb.dis = seq(1,8, 0.04) # arbitary distribution
+mean.arb.dis = mean(arb.dis) # Mean of arbitary distribution arb.dis
+std_arb_dis = sd(arb.dis) # Standard deviation of the distribution
+N = c(5,30,50,100,500,1000,5000,10000) # Sample Size
+s.values = numeric()
+std.values = numeric()
+SE = numeric()
+for (j in 1:length(N)){
+      m = sample(arb.dis,N[j],replace=TRUE)
+      s.values[j] = mean(m)
+      std.values[j] = sd(m)
+      }
+
+     plot(N,s.values,type ='l', col ='blue',
+          xlab ='Sample size',
+          ylab = 'Sample Mean',
+          main='Mean vs Sample size',
+          ylim =c(3.6,4.8))
+      abline( h = mean.arb.dis , lty = 3,col = "red")   
+ 
+    plot(N,std.values,type ='l', col ='blue',
+          xlab ='Sample size',
+          ylab = 'Standard Deviations',
+          main=' Standard Deviation vs Sample size'
+          )
+     abline(h =SE,lty = 3,col = "red")  
+ ```
+ 
+ 
+ From above , it can be infer that , as the sample size became very large the sample statistics like the mean, standard deviation became equal to the population mean and standard deviation.
+ 
